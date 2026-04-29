@@ -1,25 +1,25 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: pro-pages-postgres
+    container_name: usepager-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: pro_pages
-      POSTGRES_USER: pro_pages
-      POSTGRES_PASSWORD: pro_pages
+      POSTGRES_DB: usepager
+      POSTGRES_USER: userpager
+      POSTGRES_PASSWORD: passwordpager
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U pro_pages -d pro_pages"]
+      test: ["CMD-SHELL", "pg_isready -U userpager -d usepager"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   redis:
     image: redis:7-alpine
-    container_name: pro-pages-redis
+    container_name: usepager-redis
     restart: unless-stopped
     command: ["redis-server", "--appendonly", "yes"]
     ports:
