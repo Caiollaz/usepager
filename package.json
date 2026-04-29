@@ -1,0 +1,38 @@
+{
+  "name": "pro-pages",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
+  },
+  "dependencies": {
+    "@tailwindcss/postcss": "latest",
+    "better-auth": "^1.6.9",
+    "drizzle-orm": "^0.45.2",
+    "grapesjs": "^0.22.16",
+    "next": "16.2.4",
+    "postgres": "^3.4.9",
+    "react": "latest",
+    "react-dom": "latest",
+    "tailwind-merge": "latest",
+    "tailwind-variants": "latest",
+    "tailwindcss": "latest",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "latest",
+    "@types/node": "^25.6.0",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "drizzle-kit": "^0.31.10",
+    "eslint": "latest",
+    "eslint-config-next": "16.2.4",
+    "typescript": "latest"
+  }
+}
