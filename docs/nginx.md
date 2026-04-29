@@ -1,31 +1,66 @@
-# Nginx Wildcard Static Sites
+# Nginx
 
-Exemplo para servir os sites publicados por subdomínio em produção.
+## Arquivo de configuracao
 
-```nginx
-server {
-  listen 80;
-  server_name ~^(?<site>[^.]+)\.seudominio\.com$;
+O arquivo `nginx.conf` na raiz do projeto contem a configuracao completa para:
 
-  root /var/www/pro-pages/sites/$site;
-  index index.html;
+1. **App principal** (`app.seudominio.com`) — reverse proxy para o container Next.js na porta 3000.
+2. **Sites publicados** (`*.seudominio.com`) — serve arquivos estaticos direto do volume de storage sem passar pelo Next.js.
 
-  location / {
-    try_files $uri $uri/ /index.html =404;
-  }
+## Setup
 
-  location /uploads/ {
-    try_files $uri =404;
-  }
-}
+```bash
+# 1. Copie o arquivo para o Nginx
+sudo cp nginx.conf /etc/nginx/sites-available/usepager.conf
+
+# 2. Edite e substitua "seudominio.com" pelo dominio real
+sudo nano /etc/nginx/sites-available/usepager.conf
+
+# 3. Ajuste o path do volume na secao de sites publicados
+#    Troque "/data/usepager/storage/sites" pelo mount point real do volume no host
+
+# 4. Ative o site
+sudo ln -s /etc/nginx/sites-available/usepager.conf /etc/nginx/sites-enabled/
+
+# 5. Teste a configuracao
+sudo nginx -t
+
+# 6. Reload
+sudo systemctl reload nginx
 ```
 
-Configure no app:
+## SSL com wildcard
+
+Para HTTPS em `app.seudominio.com` e `*.seudominio.com`:
+
+```bash
+# Certbot com DNS challenge (necessario para wildcard)
+sudo certbot certonly --dns-cloudflare \
+  --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini \
+  -d app.seudominio.com \
+  -d "*.seudominio.com"
+
+# Depois rode novamente para injetar no Nginx
+sudo certbot install --nginx -d app.seudominio.com -d "*.seudominio.com"
+```
+
+Se nao usar Cloudflare, substitua pelo plugin DNS do seu provedor.
+
+## DNS
+
+Configure no painel do seu provedor de DNS:
+
+| Tipo | Nome | Valor |
+|------|------|-------|
+| A | `app` | IP da VPS |
+| A | `*` | IP da VPS |
+
+## Variaveis de ambiente relacionadas
 
 ```env
 SITE_BASE_DOMAIN="seudominio.com"
-STATIC_SITES_DIR="/var/www/pro-pages/sites"
-STORAGE_DIR="/var/www/pro-pages/storage"
+STATIC_SITES_DIR="./storage/sites"
+STORAGE_DIR="./storage"
 ```
 
-Garanta que o usuário do processo Next tenha permissão de escrita em `STATIC_SITES_DIR` e `STORAGE_DIR`.
+O `STATIC_SITES_DIR` dentro do container resolve para `/app/storage/sites`. O Nginx precisa acessar esse mesmo diretorio pelo path do host onde o volume Docker esta montado.

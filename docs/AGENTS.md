@@ -15,6 +15,7 @@ This folder contains operational documentation for developers and deployments.
 ## Current Docs
 
 - `nginx.md`: wildcard subdomain serving example for published static sites.
+- `dokploy.md`: step-by-step deploy guide for Dokploy on a VPS.
 
 ## Style
 
