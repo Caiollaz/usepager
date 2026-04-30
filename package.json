@@ -16,6 +16,7 @@
     "better-auth": "^1.6.9",
     "drizzle-orm": "^0.45.2",
     "grapesjs": "^0.22.16",
+    "grapesjs-preset-webpage": "^1.0.3",
     "next": "16.2.4",
     "pg": "^8.20.0",
     "react": "^19.2.5",

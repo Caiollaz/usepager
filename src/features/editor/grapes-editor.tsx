@@ -33,7 +33,10 @@ export function GrapesEditor({ blocks, initialCss, initialHtml, initialProjectDa
     const { blocks: b, initialCss: css, initialHtml: html, initialProjectData: data } = initialRef.current;
 
     async function mountEditor() {
-      const { default: grapes } = await import("grapesjs");
+      const [{ default: grapes }, { default: presetWebpage }] = await Promise.all([
+        import("grapesjs"),
+        import("grapesjs-preset-webpage"),
+      ]);
 
       if (!containerRef.current || disposed) return;
 
@@ -41,6 +44,16 @@ export function GrapesEditor({ blocks, initialCss, initialHtml, initialProjectDa
         container: containerRef.current,
         height: "100%",
         storageManager: false,
+        plugins: [presetWebpage],
+        pluginsOpts: {
+          [presetWebpage as unknown as string]: {
+            blocksBasicOpts: { flexGrid: true },
+            formsOpts: false,
+            countdownOpts: false,
+            exportOpts: false,
+            navbarOpts: false,
+          },
+        },
       });
 
       for (const group of b) {
