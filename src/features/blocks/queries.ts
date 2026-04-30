@@ -1,18 +1,20 @@
-import { count, desc, eq } from "drizzle-orm";
+import { count, desc, eq, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { blocks } from "@/db/schema";
 
 export async function getBlockMetrics() {
-  const [total, active, review] = await Promise.all([
-    db.select({ value: count() }).from(blocks),
-    db.select({ value: count() }).from(blocks).where(eq(blocks.status, "active")),
-    db.select({ value: count() }).from(blocks).where(eq(blocks.status, "review")),
-  ]);
+  const [row] = await db
+    .select({
+      total: count(),
+      active: count(sql`case when ${blocks.status} = 'active' then 1 end`),
+      review: count(sql`case when ${blocks.status} = 'review' then 1 end`),
+    })
+    .from(blocks);
 
   return [
-    { label: "Total de Blocos", value: String(total[0]?.value ?? 0) },
-    { label: "Ativos", value: String(active[0]?.value ?? 0), tone: "success" as const },
-    { label: "Em Revisão", value: String(review[0]?.value ?? 0), tone: "warning" as const },
+    { label: "Total de Blocos", value: String(row?.total ?? 0) },
+    { label: "Ativos", value: String(row?.active ?? 0), tone: "success" as const },
+    { label: "Em Revisão", value: String(row?.review ?? 0), tone: "warning" as const },
   ];
 }
 

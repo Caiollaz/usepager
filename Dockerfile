@@ -31,7 +31,7 @@ COPY --from=builder /app/.next/standalone ./
 # Copy static assets
 COPY --from=builder /app/.next/static ./.next/static
 # Copy drizzle migrations for auto-migrate on startup
-COPY --from=builder /app/drizzle ./drizzle
+COPY --from=builder /app/src/db/migrations ./src/db/migrations
 COPY --from=builder /app/drizzle.config.ts ./drizzle.config.ts
 # Copy drizzle-kit binary for running migrations
 COPY --from=builder /app/node_modules/drizzle-kit ./node_modules/drizzle-kit

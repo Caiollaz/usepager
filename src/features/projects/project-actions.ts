@@ -1,11 +1,14 @@
 "use server";
 
+import { rm } from "node:fs/promises";
+import path from "node:path";
 import { and, eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { db } from "@/db";
 import { pages, projects } from "@/db/schema";
+import { getStorageDir, isInsideStorage } from "@/features/assets/asset-security";
 import { requireProjectAccess } from "@/features/projects/project-access";
 import { removeStaticSite } from "@/features/publishing/static-site-builder";
 import { createId } from "@/lib/id";
@@ -41,30 +44,37 @@ export async function createProjectAction(formData: FormData) {
   const pageId = createId("page");
   const domain = `${subdomain}.${process.env.SITE_BASE_DOMAIN ?? "localhost"}`;
 
-  await db.transaction(async (tx) => {
-    await tx.insert(projects).values({
-      id: projectId,
-      ownerId: session.user.id,
-      name: parsed.name,
-      slug: assertSafeSubdomain(slug),
-      subdomain,
-      domain,
-      description: parsed.description,
-      metaTitle: parsed.name,
-      metaDescription: parsed.description,
+  try {
+    await db.transaction(async (tx) => {
+      await tx.insert(projects).values({
+        id: projectId,
+        ownerId: session.user.id,
+        name: parsed.name,
+        slug: assertSafeSubdomain(slug),
+        subdomain,
+        domain,
+        description: parsed.description,
+        metaTitle: parsed.name,
+        metaDescription: parsed.description,
+      });
+      await tx.insert(pages).values({
+        id: pageId,
+        projectId,
+        title: "Home",
+        slug: "index",
+        html: `<section class="hero"><h1>${parsed.name}</h1><p>${parsed.description ?? "Site criado com Pro Pages."}</p></section>`,
+        css: ".hero{min-height:100vh;display:grid;place-items:center;text-align:center;font-family:Inter,system-ui,sans-serif;padding:48px}.hero h1{font-size:48px;margin:0}.hero p{color:#71717a;font-size:18px}",
+        grapesJson: "{}",
+        metaTitle: parsed.name,
+        metaDescription: parsed.description,
+      });
     });
-    await tx.insert(pages).values({
-      id: pageId,
-      projectId,
-      title: "Home",
-      slug: "index",
-      html: `<section class="hero"><h1>${parsed.name}</h1><p>${parsed.description ?? "Site criado com Pro Pages."}</p></section>`,
-      css: ".hero{min-height:100vh;display:grid;place-items:center;text-align:center;font-family:Inter,system-ui,sans-serif;padding:48px}.hero h1{font-size:48px;margin:0}.hero p{color:#71717a;font-size:18px}",
-      grapesJson: "{}",
-      metaTitle: parsed.name,
-      metaDescription: parsed.description,
-    });
-  });
+  } catch (error) {
+    if (error instanceof Error && error.message.includes("unique")) {
+      throw new Error("Já existe um projeto com esse subdomínio ou slug. Escolha outro nome.");
+    }
+    throw error;
+  }
 
   revalidatePath("/dashboard");
   redirect(`/editor/${projectId}/${pageId}`);
@@ -112,6 +122,12 @@ export async function deleteProjectAction(projectId: string) {
   const project = await requireProjectAccess(projectId, session.user.id);
 
   await removeStaticSite(project.subdomain);
+
+  const assetsDir = path.join(getStorageDir(), "assets", project.id);
+  if (isInsideStorage(assetsDir)) {
+    await rm(assetsDir, { recursive: true, force: true });
+  }
+
   await db.delete(projects).where(and(eq(projects.id, project.id), eq(projects.ownerId, session.user.id)));
   revalidatePath("/dashboard");
   redirect("/dashboard");

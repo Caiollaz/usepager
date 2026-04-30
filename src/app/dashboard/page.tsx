@@ -18,7 +18,7 @@ export default async function DashboardPage() {
         <div className="mx-auto grid max-w-295 gap-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <SectionHeading description="Gerencie seus sites e projetos" title="Projetos" />
-            <Button className="h-9.25 self-start px-5">
+            <Button asChild className="h-9.25 self-start px-5">
               <a href="/projects/new">
                 <Icon name="plus" />
                 Novo Projeto

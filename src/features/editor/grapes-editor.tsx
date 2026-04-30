@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
+import "grapesjs/dist/css/grapes.min.css";
 import type { Editor } from "grapesjs";
 import { Button } from "@/components/atoms/button";
 import { savePageContentAction } from "@/features/pages/page-actions";
@@ -22,12 +23,14 @@ export type GrapesEditorProps = {
 export function GrapesEditor({ blocks, initialCss, initialHtml, initialProjectData, pageId }: GrapesEditorProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<Editor | null>(null);
+  const initialRef = useRef({ blocks, initialCss, initialHtml, initialProjectData });
   const [isReady, setIsReady] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     let disposed = false;
+    const { blocks: b, initialCss: css, initialHtml: html, initialProjectData: data } = initialRef.current;
 
     async function mountEditor() {
       const { default: grapes } = await import("grapesjs");
@@ -42,7 +45,7 @@ export function GrapesEditor({ blocks, initialCss, initialHtml, initialProjectDa
         panels: { defaults: [] },
       });
 
-      for (const group of blocks) {
+      for (const group of b) {
         for (const block of group.items) {
           editor.BlockManager.add(`${group.title}-${block.name}`, {
             label: block.name,
@@ -53,16 +56,16 @@ export function GrapesEditor({ blocks, initialCss, initialHtml, initialProjectDa
       }
 
       try {
-        const projectData = JSON.parse(initialProjectData || "{}");
+        const projectData = JSON.parse(data || "{}");
         if (Object.keys(projectData).length > 0) {
           editor.loadProjectData(projectData);
         } else {
-          editor.setComponents(initialHtml || "<section><h1>Novo site</h1><p>Edite este conteúdo.</p></section>");
-          editor.setStyle(initialCss || "body{font-family:Inter,system-ui,sans-serif;color:#0a0a0a}");
+          editor.setComponents(html || "<section><h1>Novo site</h1><p>Edite este conteúdo.</p></section>");
+          editor.setStyle(css || "body{font-family:Inter,system-ui,sans-serif;color:#0a0a0a}");
         }
       } catch {
-        editor.setComponents(initialHtml);
-        editor.setStyle(initialCss);
+        editor.setComponents(html);
+        editor.setStyle(css);
       }
 
       editorRef.current = editor;
@@ -76,7 +79,7 @@ export function GrapesEditor({ blocks, initialCss, initialHtml, initialProjectDa
       editorRef.current?.destroy();
       editorRef.current = null;
     };
-  }, [blocks, initialCss, initialHtml, initialProjectData]);
+  }, []);
 
   function save() {
     const editor = editorRef.current;
@@ -95,7 +98,7 @@ export function GrapesEditor({ blocks, initialCss, initialHtml, initialProjectDa
   }
 
   return (
-    <div className="flex min-h-180 flex-1 flex-col bg-canvas">
+    <div className="flex flex-1 flex-col overflow-hidden bg-canvas" style={{ height: "calc(100dvh - 3.5rem)" }}>
       <div className="flex h-12 items-center justify-between border-b border-border bg-sidebar px-4">
         <span className="text-sm text-muted-foreground">{isReady ? "Editor pronto" : "Carregando editor..."}</span>
         <div className="flex items-center gap-3">
@@ -105,7 +108,7 @@ export function GrapesEditor({ blocks, initialCss, initialHtml, initialProjectDa
           </Button>
         </div>
       </div>
-      <div className="min-h-0 flex-1" ref={containerRef} />
+      <div className="relative min-h-0 flex-1" ref={containerRef} />
     </div>
   );
 }
