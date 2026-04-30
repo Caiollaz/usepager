@@ -2,17 +2,17 @@
 
 ## Scope
 
-This folder owns database connection, schema, and read queries.
+This folder owns database connection, schema, and migrations.
 
 ## Files
 
-- `index.ts`: Drizzle/Postgres client setup.
+- `index.ts`: Drizzle/node-postgres client setup with `casing: "snake_case"`.
 - `schema.ts`: source of truth for tables, columns, enums, relations, indexes.
-- `queries.ts`: read-only query helpers used by routes and pages.
+- `migrations/`: generated migration files managed by drizzle-kit.
 
 ## Schema Rules
 
-- Database columns use snake_case.
+- Database columns use snake_case (handled automatically by the `casing` option).
 - TypeScript properties use camelCase.
 - Use Drizzle enums for constrained state such as statuses and roles.
 - Add indexes when adding frequent filters, joins, or ordering patterns.
@@ -21,7 +21,8 @@ This folder owns database connection, schema, and read queries.
 
 ## Query Rules
 
-- Keep mutations out of `queries.ts`; mutations belong in Server Actions under `src/features`.
+- Read queries belong in `src/features/<feature>/queries.ts`, not in this folder.
+- Mutations belong in Server Actions under `src/features`.
 - Prefer Drizzle operators such as `eq`, `and`, `desc`, `count` over raw SQL.
 - Keep selects narrow when returning data to UI.
 - Owner-scoped reads must include the owner check unless already enforced by the caller and documented in the function name/signature.

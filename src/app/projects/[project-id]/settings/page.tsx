@@ -7,7 +7,7 @@ import { Textarea } from "@/components/atoms/textarea";
 import { Field } from "@/components/molecules/field";
 import { SectionHeading } from "@/components/molecules/section-heading";
 import { AppShell } from "@/components/organisms/app-shell";
-import { getProjectAssets, getProjectPages } from "@/db/queries";
+import { getProjectAssets, getProjectPages } from "@/features/projects/queries";
 import { deleteProjectAssetAction, uploadProjectAssetAction } from "@/features/assets/asset-actions";
 import { requireProjectAccess } from "@/features/projects/project-access";
 import { deleteProjectAction, updateProjectSettingsAction } from "@/features/projects/project-actions";

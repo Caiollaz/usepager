@@ -4,7 +4,7 @@ import { AppShell } from "@/components/organisms/app-shell";
 import { ProjectCard } from "@/components/molecules/project-card";
 import { SectionHeading } from "@/components/molecules/section-heading";
 import { StatCard } from "@/components/molecules/stat-card";
-import { getProjectMetrics, getProjects } from "@/db/queries";
+import { getProjectMetrics, getProjects } from "@/features/projects/queries";
 import { createNavItems } from "@/lib/navigation";
 import { requireSession } from "@/lib/session";
 

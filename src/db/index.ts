@@ -1,5 +1,5 @@
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
+import { drizzle } from "drizzle-orm/node-postgres";
+import pg from "pg";
 import * as schema from "./schema";
 
 const connectionString = process.env.DATABASE_URL;
@@ -8,7 +8,7 @@ if (!connectionString) {
   throw new Error("DATABASE_URL is required");
 }
 
-const client = postgres(connectionString, { prepare: false });
+const pool = new pg.Pool({ connectionString });
 
-export const db = drizzle(client, { schema });
+export const db = drizzle(pool, { schema, casing: "snake_case" });
 export type Database = typeof db;

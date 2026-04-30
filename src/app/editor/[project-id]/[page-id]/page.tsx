@@ -3,7 +3,7 @@ import { Icon } from "@/components/atoms/icon";
 import { GrapesEditor } from "@/features/editor/grapes-editor";
 import { requirePageAccess } from "@/features/projects/project-access";
 import { publishProjectAction } from "@/features/publishing/publish-project-action";
-import { getEditorBlockGroups } from "@/db/queries";
+import { getEditorBlockGroups } from "@/features/blocks/queries";
 import { requireSession } from "@/lib/session";
 
 type EditorPageProps = {

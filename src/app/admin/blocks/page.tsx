@@ -9,7 +9,7 @@ import { Field } from "@/components/molecules/field";
 import { SectionHeading } from "@/components/molecules/section-heading";
 import { StatCard } from "@/components/molecules/stat-card";
 import { AppShell } from "@/components/organisms/app-shell";
-import { getBlockMetrics, getBlocks } from "@/db/queries";
+import { getBlockMetrics, getBlocks } from "@/features/blocks/queries";
 import { createBlockAction, deleteBlockAction } from "@/features/blocks/block-actions";
 import { requireAdmin } from "@/lib/authorization";
 import { createNavItems } from "@/lib/navigation";

@@ -17,7 +17,7 @@
     "drizzle-orm": "^0.45.2",
     "grapesjs": "^0.22.16",
     "next": "16.2.4",
-    "postgres": "^3.4.9",
+    "pg": "^8.20.0",
     "react": "latest",
     "react-dom": "latest",
     "tailwind-merge": "latest",
@@ -28,6 +28,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "latest",
     "@types/node": "^25.6.0",
+    "@types/pg": "^8.20.0",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "drizzle-kit": "^0.31.10",
