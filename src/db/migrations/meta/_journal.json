@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1777473109161,
-      "tag": "0000_dusty_tarot",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1777480818493,
-      "tag": "0001_mature_wolf_cub",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1777489000000,
-      "tag": "0002_secure_backend",
+      "when": 1777549848788,
+      "tag": "0000_soft_power_man",
       "breakpoints": true
     }
   ]

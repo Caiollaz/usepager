@@ -5,7 +5,7 @@ export const projectStatus = pgEnum("project_status", ["published", "draft"]);
 export const blockStatus = pgEnum("block_status", ["active", "review"]);
 export const publicationStatus = pgEnum("publication_status", ["success", "failed"]);
 
-export const user = pgTable("user", {
+export const users = pgTable("users", {
   id: text().primaryKey(),
   name: text().notNull(),
   email: text().notNull().unique(),
@@ -16,8 +16,8 @@ export const user = pgTable("user", {
   updatedAt: timestamp().notNull().defaultNow(),
 });
 
-export const session = pgTable(
-  "session",
+export const sessions = pgTable(
+  "sessions",
   {
     id: text().primaryKey(),
     expiresAt: timestamp().notNull(),
@@ -28,20 +28,20 @@ export const session = pgTable(
     userAgent: text(),
     userId: text()
       .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
+      .references(() => users.id, { onDelete: "cascade" }),
   },
   (table) => [index("session_user_id_idx").on(table.userId), index("session_expires_at_idx").on(table.expiresAt)],
 );
 
-export const account = pgTable(
-  "account",
+export const accounts = pgTable(
+  "accounts",
   {
     id: text().primaryKey(),
     accountId: text().notNull(),
     providerId: text().notNull(),
     userId: text()
       .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
+      .references(() => users.id, { onDelete: "cascade" }),
     accessToken: text(),
     refreshToken: text(),
     idToken: text(),
@@ -55,7 +55,7 @@ export const account = pgTable(
   (table) => [index("account_user_id_idx").on(table.userId), index("account_provider_account_idx").on(table.providerId, table.accountId)],
 );
 
-export const verification = pgTable("verification", {
+export const verifications = pgTable("verifications", {
   id: text().primaryKey(),
   identifier: text().notNull(),
   value: text().notNull(),
@@ -78,7 +78,7 @@ export const projects = pgTable(
     id: text().primaryKey(),
     ownerId: text()
       .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
+      .references(() => users.id, { onDelete: "cascade" }),
     name: text().notNull(),
     slug: text().notNull().unique(),
     subdomain: text().notNull().unique(),
