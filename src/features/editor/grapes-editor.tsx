@@ -41,8 +41,6 @@ export function GrapesEditor({ blocks, initialCss, initialHtml, initialProjectDa
         container: containerRef.current,
         height: "100%",
         storageManager: false,
-        blockManager: { appendTo: undefined },
-        panels: { defaults: [] },
       });
 
       for (const group of b) {
@@ -59,13 +57,15 @@ export function GrapesEditor({ blocks, initialCss, initialHtml, initialProjectDa
         const projectData = JSON.parse(data || "{}");
         if (Object.keys(projectData).length > 0) {
           editor.loadProjectData(projectData);
-        } else {
-          editor.setComponents(html || "<section><h1>Novo site</h1><p>Edite este conteúdo.</p></section>");
-          editor.setStyle(css || "body{font-family:Inter,system-ui,sans-serif;color:#0a0a0a}");
+        } else if (html) {
+          editor.setComponents(html);
+          editor.setStyle(css);
         }
       } catch {
-        editor.setComponents(html);
-        editor.setStyle(css);
+        if (html) {
+          editor.setComponents(html);
+          editor.setStyle(css);
+        }
       }
 
       editorRef.current = editor;
@@ -98,7 +98,7 @@ export function GrapesEditor({ blocks, initialCss, initialHtml, initialProjectDa
   }
 
   return (
-    <div className="flex flex-1 flex-col overflow-hidden bg-canvas" style={{ height: "calc(100dvh - 3.5rem)" }}>
+    <div className="flex min-h-0 flex-1 flex-col bg-canvas">
       <div className="flex h-12 items-center justify-between border-b border-border bg-sidebar px-4">
         <span className="text-sm text-muted-foreground">{isReady ? "Editor pronto" : "Carregando editor..."}</span>
         <div className="flex items-center gap-3">

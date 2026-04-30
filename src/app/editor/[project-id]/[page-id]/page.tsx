@@ -20,7 +20,7 @@ export default async function ProjectEditorPage({ params }: EditorPageProps) {
   const groups = await getEditorBlockGroups();
 
   return (
-    <main className="flex min-h-dvh flex-col bg-background text-foreground">
+    <main className="flex h-dvh flex-col overflow-hidden bg-background text-foreground">
       <header className="flex min-h-14 items-center justify-between border-b border-border bg-secondary px-4">
         <div className="flex items-center gap-3">
           <Button asChild aria-label="Voltar" className="size-8" size="icon" variant="ghost">
